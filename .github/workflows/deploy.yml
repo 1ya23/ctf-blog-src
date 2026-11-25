@@ -2,6 +2,14 @@ name: Hexo Deploy
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
+
+# 关键：Pages部署需要的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,5 +27,9 @@ jobs:
         run: npm install
       - name: Hexo build
         run: npx hexo clean && npx hexo generate
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
       - name: Deploy pages
         uses: actions/deploy-pages@v4

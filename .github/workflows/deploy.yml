@@ -2,35 +2,22 @@ name: Hexo Deploy
 on:
   push:
     branches: [ main ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          submodule: true
-
+          submodules: true
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
+          cache: npm
       - name: Install dependencies
         run: npm install
-
-      - name: Install Hexo
-        run: npm install -g hexo-cli
-
-      - name: Build site
-        run: hexo g
-
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: gh-pages
+      - name: Hexo build
+        run: npx hexo clean && npx hexo generate
+      - name: Deploy pages
+        uses: actions/deploy-pages@v4

@@ -15,8 +15,7 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
+        # ⚠️ 这里不要加 submodules: true！！
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -24,12 +23,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm install
-      - name: Check theme files
-        run: ls -la themes/butterfly
       - name: Hexo build
         run: npx hexo clean && npx hexo generate
-      - name: Check public folder
-        run: ls -la public
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

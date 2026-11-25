@@ -1,0 +1,38 @@
+name: Hexo Deploy
+
+on:
+  push:
+    branches: [ main ]
+  # 允许在仓库页面手动点按钮触发一次部署
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 拉取 Butterfly 主题
+        run: git clone --depth=1 https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+
+      - name: 安装博客依赖
+        run: npm install
+
+      - name: 生成静态页面
+        run: npx hexo clean && npx hexo g
+
+      - name: 部署到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.PAT }}
+          publish_dir: ./public
+          publish_branch: main
+          external_repository: 1ya23/1ya23.github.io
